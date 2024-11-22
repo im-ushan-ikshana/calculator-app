@@ -1,6 +1,10 @@
 // App.js
-
+//import section
+//importing the required components from the libraries - react, react-native, expo-font, expo-splash-screen, mathjs
 import React, { useState, useCallback } from 'react';
+
+//importing the required components from the libraries - react-native, expo-vector-icons
+//ui components - View, Text, TouchableOpacity, Modal, FlatList, SafeAreaView, Dimensions, TouchableWithoutFeedback
 import {
   StyleSheet,
   Text,
@@ -12,29 +16,55 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from 'react-native';
+
+//impoert vector icons from expo-vector-icons
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+//importing the required components from the libraries - expo-font, expo-splash-screen
 import { useFonts } from 'expo-font';
+
+//importing the required components from the libraries - expo-splash-screen
+//splash screen - preventAutoHideAsync, hideAsync
 import * as SplashScreen from 'expo-splash-screen';
+
+//importing the required components from the libraries - mathjs
 import { create, all } from 'mathjs';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
+// Create a mathjs instance with all the functions
 const math = create(all);
 
+//exporting the App function
+//App function - functional component
+//App function returns the JSX
 export default function App() {
+  //useState hooks
+  //useState hooks - display, setDisplay - used for displaying the input and output
   const [display, setDisplay] = useState('');
+
+  //useState hooks - error, setError - used for displaying the error message
   const [error, setError] = useState('');
+
+  //useState hooks - history, setHistory - used for storing the history of calculations
   const [history, setHistory] = useState([]);
+
+  //useState hooks - isDarkTheme, setIsDarkTheme - used for toggling the theme
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+
+  //useState hooks - isHistoryVisible, setIsHistoryVisible - used for toggling the history modal
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+
+  //useState hooks - isErrorVisible, setIsErrorVisible - used for toggling the error modal
   const [isErrorVisible, setIsErrorVisible] = useState(false);
 
+  //useFonts hook - fontsLoaded - used for loading the custom font
   const [fontsLoaded] = useFonts({
     OpenSans: require('./assets/fonts/opensans.ttf'),
   });
 
-  // Callback to hide the splash screen when fonts are loaded
+  // Callback to hide the splash screen when fonts are loaded - onLayoutRootView
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -45,59 +75,89 @@ export default function App() {
     return null; // Render nothing until fonts are loaded
   }
 
+  //handlePress function - used for handling the button press
   const handlePress = (value) => {
+    //if the value is 'C', then set the display to empty string
     setError('');
     if (value === 'C') {
       setDisplay('');
     } else if (value === '=') {
+      //if the value is '=', then evaluate the expression and set the result to display
       try {
         const result = evaluateExpression(display);
+        //add the expression and result to the history - ...history, `${display} = ${result}`
         setHistory([...history, `${display} = ${result}`]);
+        //setDisplay(result.toString()) - set the result to display
         setDisplay(result.toString());
       } catch (e) {
+        //if there is an error, set the error message to display
         setError(e.message);
+        //setIsErrorVisible(true) - set the error modal to visible
         setIsErrorVisible(true);
         setDisplay('');
       }
     } else {
+      //if the value is not 'C' or '=', then add the value to the display
       setDisplay(display + value);
     }
   };
 
+  //handleBackspace function - used for handling the backspace button press
+  //when the backspace button is pressed, the last character is removed from the display
   const handleBackspace = () => {
     setDisplay(display.slice(0, -1));
   };
 
+  //evaluateExpression function - used for evaluating the expression
+  //the expression is sanitized and evaluated using mathjs
+  //in here × is replaced with * and ÷ is replaced with /
   const evaluateExpression = (expression) => {
     const sanitizedExpression = expression.replace(/×/g, '*').replace(/÷/g, '/');
 
+    //result - math.evaluate(sanitizedExpression) - evaluate the expression using mathjs
     const result = math.evaluate(sanitizedExpression);
 
+    //if the result is not a finite number, then throw an error
     if (!isFinite(result)) {
       throw new Error('Cannot divide by zero.');
     }
     return result;
   };
 
+  //toggleTheme function - used for toggling the theme
+  //here, the isDarkTheme is toggled - funcitonality to switch between dark and light themes
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
 
+  //toggleHistory function - used for toggling the history modal
+  //here, the isHistoryVisible is toggled - functionality to show and hide the history modal
   const toggleHistory = () => {
     setIsHistoryVisible(!isHistoryVisible);
   };
 
+  //toggleError function - used for toggling the error modal
+  //here, the isErrorVisible is toggled - functionality to show and hide the error modal
   const toggleError = () => {
     setIsErrorVisible(!isErrorVisible);
   };
 
+  //createStyles function - used for creating the styles based on the theme
+  //the styles are created based on the isDarkTheme
   const styles = createStyles(isDarkTheme);
 
+  //return the JSX
+  //here the main JSX is returned - detailed explanation is provided in the comments
   return (
+    //SafeAreaView - used for providing padding for the status bar
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
       {/* Header */}
+      {/* Header Container - contains the header and theme button */}
+      {/* Header - contains the title of the app */}
+      {/* Theme Button - used for toggling the theme */}
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Pandas Cal</Text>
+        {/* Theme Button */}
         <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
           <MaterialCommunityIcons
             name={isDarkTheme ? 'weather-night' : 'white-balance-sunny'}
