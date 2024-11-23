@@ -17,14 +17,11 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-//impoert vector icons from expo-vector-icons
+//import vector icons from expo-vector-icons
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 //importing the required components from the libraries - expo-font, expo-splash-screen
 import { useFonts } from 'expo-font';
-
-//importing the required components from the libraries - expo-splash-screen
-//splash screen - preventAutoHideAsync, hideAsync
 import * as SplashScreen from 'expo-splash-screen';
 
 //importing the required components from the libraries - mathjs
@@ -100,6 +97,10 @@ export default function App() {
       if (/[-+*/×÷]$/.test(display) && /[-+*/×÷]/.test(value)) {
         return;
       }
+      // Prevent multiple decimal points in a number
+      if (value === '.' && display.match(/\.\d*$/)) {
+        return;
+      }
       //if the value is not 'C' or '=', then add the value to the display
       setDisplay(display + value);
     }
@@ -115,7 +116,11 @@ export default function App() {
   //the expression is sanitized and evaluated using mathjs
   //in here × is replaced with * and ÷ is replaced with /
   const evaluateExpression = (expression) => {
-    const sanitizedExpression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+    const sanitizedExpression = expression
+      .replace(/\u00d7/g, '*')
+      .replace(/\u00f7/g, '/')
+      .replace(/%/g, '/100') // handle percentage
+      .replace(/\u221a/g, 'sqrt'); // handle square root
 
     //result - math.evaluate(sanitizedExpression) - evaluate the expression using mathjs
     const result = math.evaluate(sanitizedExpression);
@@ -154,31 +159,25 @@ export default function App() {
   return (
     //SafeAreaView - used for providing padding for the status bar
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-      {/* Header */}
-      {/* Header Container - contains the header and theme button */}
-      {/* Header - contains the title of the app */}
-      {/* Theme Button - used for toggling the theme */}
+      {/* Header Container - now contains the theme button on the left and history button on the right */}
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Pandas Cal</Text>
         {/* Theme Button */}
-        <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
+        <TouchableOpacity onPress={toggleTheme} style={styles.themeButtonLeft}>
           <MaterialCommunityIcons
             name={isDarkTheme ? 'weather-night' : 'white-balance-sunny'}
-            size={32}
+            size={24}
+            color={isDarkTheme ? '#fff' : '#000'}
+          />
+        </TouchableOpacity>
+        {/* History Button */}
+        <TouchableOpacity onPress={toggleHistory} style={styles.historyButtonRight}>
+          <MaterialCommunityIcons
+            name="history"
+            size={24}
             color={isDarkTheme ? '#fff' : '#000'}
           />
         </TouchableOpacity>
       </View>
-
-      {/* History Toggle */}
-      <TouchableOpacity onPress={toggleHistory} style={styles.historyToggle}>
-        <Text style={styles.historyToggleText}>History</Text>
-        <MaterialCommunityIcons
-          name="chevron-down"
-          size={24}
-          color={isDarkTheme ? '#fff' : '#000'}
-        />
-      </TouchableOpacity>
 
       {/* Display */}
       <View style={styles.displayContainer}>
@@ -252,7 +251,7 @@ export default function App() {
         </View>
         {/* Fifth Row */}
         <View style={styles.buttonRow}>
-          {['.', '0', '='].map((item) => (
+          {['√', '%', '.', '0', '='].map((item) => (
             <CalculatorButton
               key={item}
               value={item}
@@ -377,24 +376,13 @@ const createStyles = (isDarkTheme = true) => {
       paddingTop: 40,
       paddingBottom: 10,
     },
-    header: {
-      fontSize: 32,
-      color: isDarkTheme ? '#fff' : '#000',
-      fontWeight: 'bold',
-    },
-    themeButton: {
+    themeButtonLeft: {
       padding: 5,
+      alignSelf: 'flex-start',
     },
-    historyToggle: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 10,
-    },
-    historyToggleText: {
-      fontSize: 20,
-      color: isDarkTheme ? '#fff' : '#000',
-      marginRight: 5,
+    historyButtonRight: {
+      padding: 5,
+      alignSelf: 'flex-end',
     },
     displayContainer: {
       flexGrow: 1,
