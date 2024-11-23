@@ -77,7 +77,6 @@ export default function App() {
 
   //handlePress function - used for handling the button press
   const handlePress = (value) => {
-    //if the value is 'C', then set the display to empty string
     setError('');
     if (value === 'C') {
       setDisplay('');
@@ -97,6 +96,10 @@ export default function App() {
         setDisplay('');
       }
     } else {
+      // Prevent adding multiple consecutive operators
+      if (/[-+*/×÷]$/.test(display) && /[-+*/×÷]/.test(value)) {
+        return;
+      }
       //if the value is not 'C' or '=', then add the value to the display
       setDisplay(display + value);
     }
@@ -333,6 +336,7 @@ export default function App() {
   );
 }
 
+//
 const CalculatorButton = ({
   value,
   onPress,
@@ -408,7 +412,7 @@ const createStyles = (isDarkTheme = true) => {
       color: isDarkTheme ? '#fff' : '#000',
       textAlign: 'right',
       fontFamily: 'OpenSans',
-      paddingRight: 40, // To avoid overlap with the backspace icon
+      paddingRight: 10,
     },
     backspaceButton: {
       position: 'absolute',
@@ -428,18 +432,18 @@ const createStyles = (isDarkTheme = true) => {
       flex: 1,
       margin: 5,
       paddingVertical: 20,
-      borderRadius: 50,
+      borderRadius: 20,
       alignItems: 'center',
       justifyContent: 'center',
     },
     operatorButton: {
-      backgroundColor: isDarkTheme ? '#f09a36' : '#f0a500',
+      backgroundColor: isDarkTheme ? '#6082B6' : '#f0a500',
     },
     specialButton: {
-      backgroundColor: isDarkTheme ? '#ff5c5c' : '#ff7f7f',
+      backgroundColor: isDarkTheme ? '#8A9A5B' : '#ff7f7f',
     },
     equalButton: {
-      backgroundColor: isDarkTheme ? '#00bfff' : '#1e90ff',
+      backgroundColor: isDarkTheme ? '#848884' : '#1e90ff',
     },
     buttonText: {
       color: isDarkTheme ? '#fff' : '#000',
