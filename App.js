@@ -1,4 +1,4 @@
-// App.js
+// Calculator App By Ushan Ikshana - IM/2021/089
 //import section
 //importing the required components from the libraries - react, react-native, expo-font, expo-splash-screen, mathjs
 import React, { useState, useCallback } from 'react';
@@ -56,6 +56,9 @@ export default function App() {
   //useState hooks - isErrorVisible, setIsErrorVisible - used for toggling the error modal
   const [isErrorVisible, setIsErrorVisible] = useState(false);
 
+  //useState hooks - resultCalculated, setResultCalculated - used for tracking if a result has been calculated
+  const [resultCalculated, setResultCalculated] = useState(false);
+
   //useFonts hook - fontsLoaded - used for loading the custom font
   const [fontsLoaded] = useFonts({
     OpenSans: require('./assets/fonts/opensans.ttf'),
@@ -77,6 +80,7 @@ export default function App() {
     setError('');
     if (value === 'C') {
       setDisplay('');
+      setResultCalculated(false);
     } else if (value === '=') {
       //if the value is '=', then evaluate the expression and set the result to display
       try {
@@ -85,6 +89,7 @@ export default function App() {
         setHistory([...history, `${display} = ${result}`]);
         //setDisplay(result.toString()) - set the result to display
         setDisplay(result.toString());
+        setResultCalculated(true);
       } catch (e) {
         //if there is an error, set the error message to display
         setError(e.message);
@@ -93,16 +98,22 @@ export default function App() {
         setDisplay('');
       }
     } else {
-      // Prevent adding multiple consecutive operators
-      if (/[-+*/×÷]$/.test(display) && /[-+*/×÷]/.test(value)) {
-        return;
+      // Clear display if a result was previously calculated and a new number is pressed
+      if (resultCalculated && !isNaN(value)) {
+        setDisplay(value);
+        setResultCalculated(false);
+      } else {
+        // Prevent adding multiple consecutive operators
+        if (/[-+*/×÷]$/.test(display) && /[-+*/×÷]/.test(value)) {
+          return;
+        }
+        // Prevent multiple decimal points in a number
+        if (value === '.' && display.match(/\.\d*$/)) {
+          return;
+        }
+        //if the value is not 'C' or '=', then add the value to the display
+        setDisplay(display + value);
       }
-      // Prevent multiple decimal points in a number
-      if (value === '.' && display.match(/\.\d*$/)) {
-        return;
-      }
-      //if the value is not 'C' or '=', then add the value to the display
-      setDisplay(display + value);
     }
   };
 
@@ -133,7 +144,7 @@ export default function App() {
   };
 
   //toggleTheme function - used for toggling the theme
-  //here, the isDarkTheme is toggled - funcitonality to switch between dark and light themes
+  //here, the isDarkTheme is toggled - functionality to switch between dark and light themes
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
   };
@@ -148,6 +159,11 @@ export default function App() {
   //here, the isErrorVisible is toggled - functionality to show and hide the error modal
   const toggleError = () => {
     setIsErrorVisible(!isErrorVisible);
+  };
+
+  //clearHistory function - used for clearing the calculation history
+  const clearHistory = () => {
+    setHistory([]);
   };
 
   //createStyles function - used for creating the styles based on the theme
@@ -298,6 +314,9 @@ export default function App() {
                 ) : (
                   <Text style={styles.noHistoryText}>No history available.</Text>
                 )}
+                <TouchableOpacity onPress={clearHistory} style={styles.clearHistoryButton}>
+                  <Text style={styles.clearHistoryText}>Clear History</Text>
+                </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
           </View>
@@ -363,6 +382,8 @@ const CalculatorButton = ({
 const createStyles = (isDarkTheme = true) => {
   const { height } = Dimensions.get('window');
 
+  //the styles are created based on the isDarkTheme - used for toggling the theme
+  //used ternary operators to switch between dark and light themes
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -461,6 +482,15 @@ const createStyles = (isDarkTheme = true) => {
       fontSize: 24,
       color: isDarkTheme ? '#fff' : '#000',
       fontWeight: 'bold',
+    },
+    clearHistoryText: {
+      fontSize: 14,
+      color: isDarkTheme ? '#ff7f7f' : '#f00',
+      marginRight: 10,
+    },
+    clearHistoryButton: {
+      marginTop: 20,
+      alignSelf: 'center',
     },
     errorMessage: {
       fontSize: 18,
