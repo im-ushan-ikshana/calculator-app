@@ -27,6 +27,9 @@ import * as SplashScreen from 'expo-splash-screen';
 //importing the required components from the libraries - mathjs
 import { create, all } from 'mathjs';
 
+//importing toast message library
+import Toast from 'react-native-toast-message';
+
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
@@ -63,6 +66,9 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     OpenSans: require('./assets/fonts/opensans.ttf'),
   });
+
+  // Maximum input length for the calculator display
+  const MAX_LENGTH = 20;
 
   // Callback to hide the splash screen when fonts are loaded - onLayoutRootView
   const onLayoutRootView = useCallback(async () => {
@@ -109,6 +115,15 @@ export default function App() {
         }
         // Prevent multiple decimal points in a number
         if (value === '.' && display.match(/\.\d*$/)) {
+          return;
+        }
+        // Prevent exceeding the maximum length
+        if (display.length >= MAX_LENGTH) {
+          Toast.show({
+            type: 'error',
+            text1: 'Input Limit Reached',
+            text2: `You can only enter up to ${MAX_LENGTH} characters.`,
+          });
           return;
         }
         //if the value is not 'C' or '=', then add the value to the display
@@ -350,6 +365,9 @@ export default function App() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+      {/* Toast Message */}
+      <Toast />
     </SafeAreaView>
   );
 }
