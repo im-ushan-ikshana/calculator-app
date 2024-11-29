@@ -84,6 +84,14 @@ export default function App() {
   //handlePress function - used for handling the button press
   const handlePress = (value) => {
     setError('');
+    // Prevent entering multiple leading zeros
+    if (display === '0' && value === '0') {
+      return;
+    }
+    // Prevent entering numbers like '000000'
+    if (/^0+$/.test(display + value)) {
+      return;
+    }
     if (value === 'C') {
       setDisplay('');
       setResultCalculated(false);
@@ -127,7 +135,7 @@ export default function App() {
             ? 'Square root of a negative number is not allowed.'
             : 'An error occurred. Please check your input.',
           textStyle: {
-            fontSize: 18,
+            fontSize: 20,
           },
         });
         setDisplay('');
