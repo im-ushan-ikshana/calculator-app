@@ -88,7 +88,27 @@ export default function App() {
       setDisplay('');
       setResultCalculated(false);
     } else if (value === '=') {
+      // Check if there are mismatched parentheses
+      const openParentheses = (display.match(/\(/g) || []).length;
+      const closeParentheses = (display.match(/\)/g) || []).length;
+      if (openParentheses !== closeParentheses) {
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid Input',
+          text2: 'Please close all open parentheses.',
+        });
+        return;
+      }
       //if the value is '=', then evaluate the expression and set the result to display
+      if (/[-+*/×÷]$/.test(display)) {
+        // Prevent pressing '=' after an operator
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid Input',
+          text2: 'Cannot end expression with an operator.',
+        });
+        return;
+      }
       try {
         const result = evaluateExpression(display);
         //add the expression and result to the history - ...history, `${display} = ${result}`
