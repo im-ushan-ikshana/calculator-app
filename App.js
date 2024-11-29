@@ -117,10 +117,19 @@ export default function App() {
         setDisplay(result.toString());
         setResultCalculated(true);
       } catch (e) {
-        //if there is an error, set the error message to display
-        setError(e.message);
-        //setIsErrorVisible(true) - set the error modal to visible
-        setIsErrorVisible(true);
+        //if there is an error, show a toast message with the error description
+        Toast.show({
+          type: 'error',
+          text1: 'Calculation Error',
+          text2: e.message === 'Cannot divide by zero.'
+            ? 'Division by zero is not allowed.'
+            : e.message === 'Invalid input: square root of a negative number is not allowed.'
+            ? 'Square root of a negative number is not allowed.'
+            : 'An error occurred. Please check your input.',
+          textStyle: {
+            fontSize: 18,
+          },
+        });
         setDisplay('');
       }
     } else {
@@ -173,7 +182,11 @@ export default function App() {
 
     //if the result is not a finite number, then throw an error
     if (!isFinite(result)) {
-      throw new Error('Cannot divide by zero.');
+      if (result === Infinity || result === -Infinity) {
+        throw new Error('Cannot divide by zero.');
+      } else {
+        throw new Error('Invalid input: square root of a negative number is not allowed.');
+      }
     }
     return result;
   };
