@@ -142,6 +142,9 @@ export default function App() {
         });
         setDisplay('');
       }
+    } else if (value === '√') { // Handle the square root button press
+      // Add the square root symbol followed by an opening parenthesis
+      setDisplay(display + '√(');
     } else {
       // Clear display if a result was previously calculated and a new number is pressed
       if (resultCalculated && !isNaN(value)) {
@@ -182,10 +185,10 @@ export default function App() {
   //in here × is replaced with * and ÷ is replaced with /
   const evaluateExpression = (expression) => {
     const sanitizedExpression = expression
-      .replace(/\u00d7/g, '*')
-      .replace(/\u00f7/g, '/')
+      .replace(/\×/g, '*')
+      .replace(/\÷/g, '/')
       .replace(/%/g, '/100') // handle percentage
-      .replace(/\u221a/g, 'sqrt'); // handle square root
+      .replace(/\√/g, 'sqrt'); // handle square root
 
     //result - math.evaluate(sanitizedExpression) - evaluate the expression using mathjs
     const result = math.evaluate(sanitizedExpression);
