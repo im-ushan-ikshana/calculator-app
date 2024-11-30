@@ -88,8 +88,9 @@ export default function App() {
     if (display === '0' && value === '0') {
       return;
     }
-    // Prevent entering numbers like '000000'
-    if (/^0+$/.test(display + value)) {
+    // Allow only one leading zero unless a decimal point follows
+    if (display === '0' && value !== '.' && !isNaN(value)) {
+      setDisplay(value);
       return;
     }
     if (value === 'C') {
@@ -129,11 +130,12 @@ export default function App() {
         Toast.show({
           type: 'error',
           text1: 'Calculation Error',
-          text2: e.message === 'Cannot divide by zero.'
-            ? 'Division by zero is not allowed.'
-            : e.message === 'Invalid input: square root of a negative number is not allowed.'
-            ? 'Square root of a negative number is not allowed.'
-            : 'An error occurred. Please check your input.',
+          text2:
+            e.message === 'Cannot divide by zero. Specific error: 0/0 is not allowed.'
+              ? 'Division by zero is not allowed.'
+              : e.message === 'Cannot divide by zero. Specific error: 0/0 is not allowed.' ? 'Division by zero is not allowed.' : e.message === 'Invalid input: square root of a negative number is not allowed.'
+              ? 'Square root of a negative number is not allowed.'
+              : 'An error occurred. Please check your input.',
           textStyle: {
             fontSize: 20,
           },
@@ -191,7 +193,7 @@ export default function App() {
     //if the result is not a finite number, then throw an error
     if (!isFinite(result)) {
       if (result === Infinity || result === -Infinity) {
-        throw new Error('Cannot divide by zero.');
+      throw new Error('Cannot divide by zero. Specific error: 0/0 is not allowed.');
       } else {
         throw new Error('Invalid input: square root of a negative number is not allowed.');
       }
@@ -231,9 +233,7 @@ export default function App() {
   return (
     //SafeAreaView - used for providing padding for the status bar
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-      {/* Header Container - now contains the theme button on the left and history button on the right */}
       <View style={styles.headerContainer}>
-        {/* Theme Button */}
         <TouchableOpacity onPress={toggleTheme} style={styles.themeButtonLeft}>
           <MaterialCommunityIcons
             name={isDarkTheme ? 'weather-night' : 'white-balance-sunny'}
@@ -241,7 +241,7 @@ export default function App() {
             color={isDarkTheme ? '#fff' : '#000'}
           />
         </TouchableOpacity>
-        {/* History Button */}
+
         <TouchableOpacity onPress={toggleHistory} style={styles.historyButtonRight}>
           <MaterialCommunityIcons
             name="history"
@@ -251,7 +251,7 @@ export default function App() {
         </TouchableOpacity>
       </View>
 
-      {/* Display */}
+      
       <View style={styles.displayContainer}>
         <Text style={styles.displayText}>{display || '0'}</Text>
         <TouchableOpacity onPress={handleBackspace} style={styles.backspaceButton}>
