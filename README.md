@@ -146,7 +146,10 @@ After the build completes, download the `.apk` or `.aab` file and open it in And
 
 ## License 📜
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **MIT License**. 
+
+[![MIT License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+
 
 ---
 
