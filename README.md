@@ -2,7 +2,7 @@
 
 This is a basic calculator application built using **React Native** with the **Expo framework**. The app supports basic arithmetic operations and includes simple validation checks.
 
-![MIT License](https://img.shields.io/badge/license-MIT-blue) ![Node.js](https://img.shields.io/badge/Node.js-14%2B-green) ![Expo CLI](https://img.shields.io/badge/Expo%20CLI-latest-blue) ![Android](https://img.shields.io/badge/Android-Supported-brightgreen) ![iOS](https://img.shields.io/badge/iOS-Supported-lightgrey) ![Stars](https://img.shields.io/github/stars/im-ushan-ikshana/calculator-app?style=social) ![Views](https://komarev.com/ghpvc/?username=im-ushan-ikshana&color=blue)
+![MIT License](https://img.shields.io/badge/license-MIT-blue) ![Node.js](https://img.shields.io/badge/Node.js-14%2B-green) ![Expo CLI](https://img.shields.io/badge/Expo%20CLI-latest-blue) ![Android](https://img.shields.io/badge/Android-Supported-brightgreen) ![iOS](https://img.shields.io/badge/iOS-Supported-lightgrey) ![Stars](https://img.shields.io/github/stars/im-ushan-ikshana/calculator-app) ![Views](https://komarev.com/ghpvc/?username=im-ushan-ikshana&color=blue)
 
 
 ## Features 🧮
